@@ -1,0 +1,67 @@
+* {
+    font-size: 20px;
+    font-family: "Roboto", serif;
+}
+
+thead {
+    font-weight: bold;
+}
+
+tr:nth-child(odd):not(thead tr, .no-alternate-rows tr) {
+    background-color: rgb(230, 230, 230);
+}
+
+tr:nth-child(odd):hover:not(thead tr, .no-alternate-rows tr) {
+    background-color: rgb(215, 215, 215);
+}
+
+tr:nth-child(even):hover:not(.no-alternate-rows tr) {
+    background-color: rgb(240, 240, 240);
+}
+
+a {
+	color: inherit;
+    text-decoration: underline;
+}
+
+button {
+    background-color: transparent;
+    font-size: 18px;
+    color: black;
+    border: none;
+    border-radius: 10px;
+    width: 160px;
+    padding: 8px 0 8px 0;
+    border: 1px solid black;
+    margin: 3px 2px 3px 2px;
+}
+
+button:hover {
+    text-decoration: underline;
+}
+
+.green {
+    color: green;
+    font-weight: bold;
+}
+
+.red {
+    color: red;
+    font-weight: bold;
+}
+
+.orange {
+    color: orange;
+    font-weight: bold;
+}
+
+.black {
+    color: black;
+    font-weight: bold;
+}
+
+.fill-h {
+    width: 100%;
+    left: 0;
+    right: 0;
+}

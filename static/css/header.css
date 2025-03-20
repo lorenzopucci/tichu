@@ -1,0 +1,53 @@
+#header {
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	background-color: #2b2b2b;
+}
+
+#header-inner {
+	width: 90%;
+	margin: 0 auto 0 auto;
+	font-size: 20px;
+	color: white;
+	display: flex;
+	padding: 12px 0 12px 0;
+	justify-content: space-between;
+}
+
+#header-inner * {
+	vertical-align: middle;
+}
+
+#header-inner a {
+	text-decoration: none;
+}
+
+#rules-link {
+	font-size: 16px;
+	margin: auto 0 auto 0;
+}
+
+#main-title {
+	text-decoration: none;
+	font-size: 28px;
+	margin-right: 10px;
+}
+
+#tichu-img {
+	height: 36px;
+}
+
+@media screen and (max-width: 800px) {
+	#main-title {
+		font-size: 22px;
+	}
+	#tichu-img {
+		height: 25px
+	}
+	#rules-link {
+		font-size: 10px;
+	}
+}

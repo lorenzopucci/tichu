@@ -1,0 +1,111 @@
+
+td > span {
+    font-size: inherit;
+}
+
+#cur-game-inner {
+    width: 50%;
+    margin: 100px auto 25px auto;
+    text-align: center;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+#main-stats > span, .tab > span {
+    font-weight: bold;
+}
+
+#main-stats > table {
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+#countdown {
+    font-size: 48px;
+    font-weight: bolder;
+}
+
+.tot_score {
+    font-size: 48px;
+}
+
+#other-games-inner {
+    width: 80%;
+    margin: 30px auto 50px auto;
+    text-align: center;
+}
+
+#buttons-cont {
+    margin-bottom: 25px;
+}
+
+.tab {
+    text-align: center;
+}
+
+.tab > table {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tab td {
+    font-size: 16px;
+    padding: 3px 5px 3px 5px;
+    border: 1px solid black;
+}
+
+td > div {
+	font-size: inherit;
+}
+
+#stat-rimonta {
+	font-size: 16px;
+	margin-bottom: 40px;
+}
+
+#map-wrapper {
+    width: 80%;
+    margin: 50px auto 0 auto;
+}
+
+.leaflet-control-attribution * {
+    font-size: 10px;
+}
+.leaflet-tooltip {
+    font-size: 16px;
+}
+
+@media screen and (max-width: 1200px) {
+    #cur-game-inner {
+        width: 70%;
+    }
+    #other-games-inner {
+        width: 95%;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    * {
+        font-size: 16px;
+    }
+    #cur-game-inner {
+        width: 90%;
+    }
+    #countdown, .tot_score {
+        font-size: 40px;
+    }
+    button, .tab td, #stat-rimonta  {
+        font-size: 13px;
+    }
+    button {
+        width: 120px;
+    }
+    #map-wrapper {
+        width: 85%;
+        margin: 50px auto 0 auto;
+    }
+}

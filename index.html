@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+
+<title>24ore di Tichu</title>
+<meta charset="UTF-8">
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/public-google-sheets-parser@latest"></script>
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+<link href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" rel="stylesheet"/>
+
+<link rel="stylesheet" href="static/css/master.css">
+<link rel="stylesheet" href="static/css/header.css">
+<link rel="stylesheet" href="static/css/cur_edition.css">
+<script src="static/scripts/common.js"></script>
+<script src="static/scripts/app.js"></script>
+<script src="static/scripts/map.js"></script>
+</head>
+
+<body>
+<div id="header"></div>
+
+<div id="cur-game" class="fill-h">
+<div id="cur-game-inner" class="inner">
+    <div id="main-stats">
+    <span>Punteggi</span>
+    <table class="no-alternate-rows">
+    <thead><tr><td>NORD</td><td>SUD</td></tr></thead>
+    <tbody><tr>
+        <td><div id="cur_tot_N" class="tot_score"> </div></td>
+        <td><div id="cur_tot_S" class="tot_score"> </div></td>
+    </tr></tbody>
+    </table>
+
+    <span style="display: none;">Turno attuale</span>
+    <table style="display: none;">
+    <thead><tr><td>NORD <span id="cur-tichu-N"></span> </td><td>SUD <span id="cur-tichu-S"></span></td></tr></thead>
+    <tbody>
+    <tr><td><div id="cur_g1_N"> </div></td><td><div id="cur_g1_S"> </div></td></tr>
+    <tr><td><div id="cur_g2_N"> </div></td><td><div id="cur_g2_S"> </div></td></tr>
+    </tbody>
+    </table>
+
+    <span style="display: none;">Tempo dall'inizio: <span id="timer-cont"> </span></span>
+    </div>
+    <div id="countdown"></div>
+</div>
+</div>
+
+<div id="other-games" class="fill-h">
+<div id="other-games-inner" class="inner">
+    <div id="buttons-cont">
+        <button onclick="switch_games()">Partite</button>
+        <button onclick="switch_turns()">Turni</button>
+        <button onclick="switch_parts()">Partecipanti</button>
+    </div>
+
+    <div id="games-tab" class="tab">
+	<span>Statistiche</span>
+    <table>
+    <thead><tr>
+        <td></td> <td>NORD</td>  <td>SUD</td>
+    </tr></thead>
+    <tbody>
+		<tr><td>Tichu chiamati</td> <td><div id="stat-t-N"> </div></td>  <td><div id="stat-t-S"> </div></td></tr>
+		<tr><td>Gran tichu chiamati</td> <td><div id="stat-gt-N"> </div></td>  <td><div id="stat-gt-S"> </div></td></tr>
+		<tr><td>Cappotti subiti</td> <td><div id="stat-ko-N"> </div></td>  <td><div id="stat-ko-S"> </div></td></tr>
+    </tbody>
+    </table>
+		<div id="stat-rimonta"></div>
+		
+    <span>Mani passate (dalla più recente)</span>
+    <table>
+    <thead><tr>
+        <td>NORD</td> <td>Punti</td> <td>Parziale</td>  <td>Parziale</td>  <td>Punti</td> <td>SUD</td>
+    </tr></thead>
+    <tbody id="games-cont">
+    </tbody>
+    </table>
+    </div>
+
+    <div id="turns-tab" class="tab">
+    <span>Turni programmati</span>
+    <table>
+    <thead><tr>
+        <td>NORD</td> <td>Orario</td> <td>SUD</td>
+    </tr></thead>
+    <tbody id="turns-cont">
+    </tbody>
+    </table>
+    </div>
+
+    <div id="parts-tab" class="tab">
+    <span>Elenco dei partecipanti</span>
+    <table>
+    <thead><tr>
+        <td>NORD</td><td>SUD</td>
+    </tr></thead>
+    <tbody id="parts-cont">
+    </tbody>
+    </table>
+    </div>
+    <div id="map-wrapper">
+    <div id="osm-map"></div>
+    </div>
+</div>
+</div>
+
+</body>
+</html>
