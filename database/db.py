@@ -172,8 +172,8 @@ class TichuDB:
 		res = self.cursor.fetchall()
 
 		for player in res:
-			is_playing_n = f"g_player_n1 = {player[0]} OR g_player_n2 = {player[0]}"
-			is_playing_s = f"g_player_s1 = {player[0]} OR g_player_s2 = {player[0]}"
+			is_playing_n = f"(g_player_n1 = {player[0]} OR g_player_n2 = {player[0]})"
+			is_playing_s = f"(g_player_s1 = {player[0]} OR g_player_s2 = {player[0]})"
 			is_playing = f"{is_playing_n} OR {is_playing_s}"
 
 			def get_tichu_str(cont):
@@ -213,11 +213,25 @@ class TichuDB:
 					(SELECT COALESCE(SUM(g_tot_score_s), 0) FROM games WHERE {is_playing_n}) +
 					(SELECT COALESCE(SUM(g_tot_score_n), 0) FROM games WHERE {is_playing_s});
 				"""),
+				"ko_got": self.query_db(f"""SELECT
+					(SELECT COUNT(*) FROM games WHERE {is_playing_n} AND g_ko_n = TRUE) +
+					(SELECT COUNT(*) FROM games WHERE {is_playing_s} AND g_ko_s = TRUE)
+				"""),
+				"ko_opp": self.query_db(f"""SELECT
+					(SELECT COUNT(*) FROM games WHERE {is_playing_n} AND g_ko_s = TRUE) +
+					(SELECT COUNT(*) FROM games WHERE {is_playing_s} AND g_ko_n = TRUE)
+				"""),
 				"closed_1": self.query_db(get_closed_str(1)),
 				"closed_2": self.query_db(get_closed_str(2)),
 				"closed_3": self.query_db(get_closed_str(3)),
 				"closed_4": self.query_db(get_closed_str(4))
 			}
+
+			players_stats[player[0]]["teams"] = []
+			if self.query_db(f"SELECT COUNT(*) FROM games WHERE {is_playing_n}") > 0:
+				players_stats[player[0]]["teams"].append("N")
+			if self.query_db(f"SELECT COUNT(*) FROM games WHERE {is_playing_s}") > 0:
+				players_stats[player[0]]["teams"].append("S")
 
 			self.cursor.execute(f"SELECT g_start_time, g_end_time FROM games WHERE {is_playing};")
 			times = self.cursor.fetchall()

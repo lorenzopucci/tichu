@@ -1,6 +1,10 @@
 * {
-    font-size: 20px;
+    font-size: inherit;
     font-family: "Roboto", serif;
+}
+
+table {
+    border-collapse: collapse;
 }
 
 thead {
@@ -19,9 +23,20 @@ tr:nth-child(even):hover:not(.no-alternate-rows tr) {
     background-color: rgb(240, 240, 240);
 }
 
+.def-table td {
+    padding: 3px 5px 3px 5px;
+    border: 1px solid black;
+}
+
 a {
 	color: inherit;
     text-decoration: underline;
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 0 0 0 0;
 }
 
 button {
@@ -64,4 +79,24 @@ button:hover {
     width: 100%;
     left: 0;
     right: 0;
+}
+
+.page-wrapper {
+    margin: 130px auto 150px auto;
+    width: 70%;
+}
+
+.leaflet-control-attribution * {
+    font-size: 10px;
+}
+
+.leaflet-tooltip {
+    font-size: 16px;
+}
+
+@media screen and (max-width: 800px) {
+    .page-wrapper {
+        width: 90%;
+        margin-top: 110px;
+    }
 }

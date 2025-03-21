@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<title>Profilo giocatore - 24ore di Tichu</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+<link href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" rel="stylesheet"/>
+
+<link rel="stylesheet" href="static/css/master.css">
+<link rel="stylesheet" href="static/css/header.css">
+<link rel="stylesheet" href="static/css/player.css">
+<script src="static/scripts/common.js"></script>
+<script src="static/scripts/player.js"></script>
+<script src="static/scripts/map.js"></script>
+</head>
+
+<body>
+<div id="header"></div>
+
+<div class="page-wrapper">
+    <h1 id="cont-name"></h1>
+    <div id="tabs-wrapper">
+    <div id="stats-tab">
+    <div id="main-info">
+        Squadra: <span id="main-team"></span>
+        <br>
+        Partecipazioni: <span id="main-editions"></span>
+        <br>
+        Luogo di origine: <span id="main-coordinates"></span>
+        <br>
+    </div>
+
+    <table id="stats-table" class="def-table">
+        <tr><td>Squadra</td><td id="cont-team"></td></tr>
+        <tr><td>Tempo di gioco</td><td id="cont-time_played"></td></tr>
+        <tr><td>Mani giocate</td><td id="cont-games_played"></td></tr>
+        <tr><td>Tichu chiamati</td><td id="cont-tichu"></td></tr>
+        <tr><td>Gran tichu chiamati</td><td id="cont-gtichu"></td></tr>
+        <tr><td>Cappotti fatti</td><td id="cont-ko_opp"></td></tr>
+        <tr><td>Cappotti subiti</td><td id="cont-ko_got"></td></tr>
+        <tr><td>Punti fatti</td><td id="cont-self_score"></td></tr>
+        <tr><td>Punti fatti dagli avversari</td><td id="cont-opp_score"></td></tr>
+        <tr><td>Delta</td><td id="cont-delta"></td></tr>
+        <tr><td>Delta per mano</td><td id="cont-delta_per_game"></td></tr>
+        <tr><td>Delta all'ora</td><td id="cont-delta_per_hour"></td></tr>
+        <tr><td>Delta al minuto</td><td id="cont-delta_per_minute"></td></tr>
+    </table>
+    </div>
+    <div id="map-wrapper"></div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -29,8 +29,8 @@ function render_map (wrapper_id, height, init_zoom, markers, line_lat) {
 
     markers.forEach(marker => {
         var target = L.latLng(
-            marker.lat + Math.random() / 50 - 0.01,
-            marker.long + Math.random() / 50 - 0.01
+            marker.lat + ((markers.length > 1) ? Math.random() / 50 - 0.01 : 0),
+            marker.long + ((markers.length > 1) ? Math.random() / 50 - 0.01 : 0)
         );
         L.marker(target, {
             icon: ((marker.team == 'N') ? blue_icon : red_icon)
@@ -42,20 +42,22 @@ function render_map (wrapper_id, height, init_zoom, markers, line_lat) {
         ).addTo(map);
     });
 
-    var lastZoom = 6;
+    var lastZoom = init_zoom;
     map.on('zoomend', () => {
         var zoom = map.getZoom();
 
         if (zoom < tooltip_threshold && (!lastZoom || lastZoom >= tooltip_threshold)) {
             map.eachLayer(l => {
                 if (!l.getTooltip()) return;
-                l.unbindTooltip().bindTooltip(l.getTooltip(), {permanent: false});
+                var tooltip = l.getTooltip();
+                l.unbindTooltip().bindTooltip(tooltip, {permanent: false});
             });
         }
         else if (zoom >= tooltip_threshold && (!lastZoom || lastZoom < tooltip_threshold)) {
             map.eachLayer(l => {
                 if (!l.getTooltip()) return;
-                l.unbindTooltip().bindTooltip(l.getTooltip(), {permanent: true});
+                var tooltip = l.getTooltip();
+                l.unbindTooltip().bindTooltip(tooltip, {permanent: true});
             });
         }
         lastZoom = zoom;

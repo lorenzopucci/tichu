@@ -1,0 +1,34 @@
+
+.page-wrapper > div, table {
+    font-size: 18px;
+}
+
+#stats-table {
+    margin-top: 30px;
+}
+
+#stats-table td {
+    padding: 3px 15px 3px 15px;
+}
+
+#stats-table td:nth-child(1) {
+    text-align: right;
+}
+
+#map-wrapper {
+    width: 400px;
+    margin: 0;
+}
+
+#tabs-wrapper {
+    display: flex;
+    justify-content: space-between;
+    vertical-align: middle;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+#tabs-wrapper > * {
+    margin: auto 0 auto 0;
+    padding: 15px 5px 15px 5px;
+}
