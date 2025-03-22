@@ -158,13 +158,90 @@ class TichuDB:
 			""")
 			
 		self.conn.commit()
+	
+	def export_player_edition(self, pl_id, edition_str, ed_id = '*'):
+
+		is_playing_n = f"(g_player_n1 = {pl_id} OR g_player_n2 = {pl_id})"
+		is_playing_s = f"(g_player_s1 = {pl_id} OR g_player_s2 = {pl_id})"
+		is_playing = f"({is_playing_n} OR {is_playing_s})"
+
+		def get_tichu_str(cont):
+			return f"""SELECT COUNT(*) FROM games WHERE
+					((g_player_n1 = {pl_id} AND g_tichu_n1 = '{cont}') OR
+					(g_player_n2 = {pl_id} AND g_tichu_n2 = '{cont}') OR
+					(g_player_s1 = {pl_id} AND g_tichu_s1 = '{cont}') OR
+					(g_player_s2 = {pl_id} AND g_tichu_s2 = '{cont}'))
+					AND {edition_str};
+				"""
+		def get_closed_str(i):
+			return f"""SELECT COUNT(*) FROM games WHERE
+					((g_player_n1 = {pl_id} AND g_win_n1 = {i}) OR
+					(g_player_n2 = {pl_id} AND g_win_n2 = {i}) OR
+					(g_player_s1 = {pl_id} AND g_win_s1 = {i}) OR
+					(g_player_s2 = {pl_id} AND g_win_s2 = {i}))
+					AND {edition_str};
+				"""
+		
+		res = {
+			"edition_id": ed_id,
+			"games_played": self.query_db(f"SELECT COUNT(*) FROM games WHERE {is_playing} AND {edition_str};"),
+			"time_played": 0,
+			"tichu_succ": self.query_db(get_tichu_str('T+')),
+			"tichu_fail": self.query_db(get_tichu_str('T-')),
+			"gtichu_succ": self.query_db(get_tichu_str('GT+')),
+			"gtichu_fail": self.query_db(get_tichu_str('GT-')),
+			"self_score": self.query_db(f"""SELECT
+				(SELECT COALESCE(SUM(g_tot_score_n), 0) FROM games WHERE {is_playing_n} AND {edition_str}) +
+				(SELECT COALESCE(SUM(g_tot_score_s), 0) FROM games WHERE {is_playing_s} AND {edition_str});
+			"""),
+			"opp_score": self.query_db(f"""SELECT
+				(SELECT COALESCE(SUM(g_tot_score_s), 0) FROM games WHERE {is_playing_n} AND {edition_str}) +
+				(SELECT COALESCE(SUM(g_tot_score_n), 0) FROM games WHERE {is_playing_s} AND {edition_str});
+			"""),
+			"ko_got": self.query_db(f"""SELECT
+				(SELECT COUNT(*) FROM games WHERE {is_playing_n} AND g_ko_n = TRUE AND {edition_str}) +
+				(SELECT COUNT(*) FROM games WHERE {is_playing_s} AND g_ko_s = TRUE AND {edition_str})
+			"""),
+			"ko_opp": self.query_db(f"""SELECT
+				(SELECT COUNT(*) FROM games WHERE {is_playing_n} AND g_ko_s = TRUE AND {edition_str}) +
+				(SELECT COUNT(*) FROM games WHERE {is_playing_s} AND g_ko_n = TRUE AND {edition_str})
+			"""),
+			"closed_1": self.query_db(get_closed_str(1)),
+			"closed_2": self.query_db(get_closed_str(2)),
+			"closed_3": self.query_db(get_closed_str(3)),
+			"closed_4": self.query_db(get_closed_str(4))
+		}
+
+		res["teams"] = []
+		if self.query_db(f"SELECT COUNT(*) FROM games WHERE {is_playing_n} AND {edition_str}") > 0:
+			res["teams"].append("N")
+		if self.query_db(f"SELECT COUNT(*) FROM games WHERE {is_playing_s} AND {edition_str}") > 0:
+			res["teams"].append("S")
+
+		self.cursor.execute(f"SELECT g_start_time, g_end_time FROM games WHERE {is_playing} AND {edition_str};")
+		times = self.cursor.fetchall()
+
+		for interval in times:
+			t_start = datetime.strptime(interval[0], "%Y-%m-%d %H:%M:%S")
+			t_end = datetime.strptime(interval[1], "%Y-%m-%d %H:%M:%S")
+			dist = t_end - t_start
+			res["time_played"] += set_precision((dist.total_seconds() / 60), 2)
+
+			
+		res["time_played"] = set_precision(res["time_played"], 0)
+		res["delta"] = res["self_score"] - res["opp_score"]
+		res["delta_per_game"] = set_precision( res["delta"] / res["games_played"], 2)
+		res["delta_per_hour"] = set_precision(res["delta"] / (res["time_played"] / 60), 2)
+		res["delta_per_minute"] = set_precision(res["delta"] / res["time_played"], 2)
+
+		return res
+
 
 	def export_players(self, dir):
 
 		if not os.path.exists(dir):
 			os.makedirs(dir)
 		
-		players_stats = {}
 		players_ids = {}
 		players_names = {}
 		
@@ -174,91 +251,31 @@ class TichuDB:
 		for player in res:
 			is_playing_n = f"(g_player_n1 = {player[0]} OR g_player_n2 = {player[0]})"
 			is_playing_s = f"(g_player_s1 = {player[0]} OR g_player_s2 = {player[0]})"
-			is_playing = f"{is_playing_n} OR {is_playing_s}"
+			is_playing = f"({is_playing_n} OR {is_playing_s})"
 
-			def get_tichu_str(cont):
-				return f"""SELECT COUNT(*) FROM games WHERE
-						(g_player_n1 = {player[0]} AND g_tichu_n1 = '{cont}') OR
-						(g_player_n2 = {player[0]} AND g_tichu_n2 = '{cont}') OR
-						(g_player_s1 = {player[0]} AND g_tichu_s1 = '{cont}') OR
-						(g_player_s2 = {player[0]} AND g_tichu_s2 = '{cont}');
-					"""
-			def get_closed_str(i):
-				return f"""SELECT COUNT(*) FROM games WHERE
-						(g_player_n1 = {player[0]} AND g_win_n1 = {i}) OR
-						(g_player_n2 = {player[0]} AND g_win_n2 = {i}) OR
-						(g_player_s1 = {player[0]} AND g_win_s1 = {i}) OR
-						(g_player_s2 = {player[0]} AND g_win_s2 = {i});
-					"""
-			
 			players_ids[player[1]] = player[0]
 			players_names[player[0]] = player[1]
-			
-			players_stats[player[0]] = {
+
+			pl_stats = {
 				"name": player[1],
 				"lat": player[2],
 				"long": player[3],
 				"editions": self.query_db(f"SELECT COUNT(DISTINCT g_edition) FROM games WHERE {is_playing};"),
-				"games_played": self.query_db(f"SELECT COUNT(*) FROM games WHERE {is_playing};"),
-				"time_played": 0,
-				"tichu_succ": self.query_db(get_tichu_str('T+')),
-				"tichu_fail": self.query_db(get_tichu_str('T-')),
-				"gtichu_succ": self.query_db(get_tichu_str('GT+')),
-				"gtichu_fail": self.query_db(get_tichu_str('GT-')),
-				"self_score": self.query_db(f"""SELECT
-					(SELECT COALESCE(SUM(g_tot_score_n), 0) FROM games WHERE {is_playing_n}) +
-					(SELECT COALESCE(SUM(g_tot_score_s), 0) FROM games WHERE {is_playing_s});
-				"""),
-				"opp_score": self.query_db(f"""SELECT
-					(SELECT COALESCE(SUM(g_tot_score_s), 0) FROM games WHERE {is_playing_n}) +
-					(SELECT COALESCE(SUM(g_tot_score_n), 0) FROM games WHERE {is_playing_s});
-				"""),
-				"ko_got": self.query_db(f"""SELECT
-					(SELECT COUNT(*) FROM games WHERE {is_playing_n} AND g_ko_n = TRUE) +
-					(SELECT COUNT(*) FROM games WHERE {is_playing_s} AND g_ko_s = TRUE)
-				"""),
-				"ko_opp": self.query_db(f"""SELECT
-					(SELECT COUNT(*) FROM games WHERE {is_playing_n} AND g_ko_s = TRUE) +
-					(SELECT COUNT(*) FROM games WHERE {is_playing_s} AND g_ko_n = TRUE)
-				"""),
-				"closed_1": self.query_db(get_closed_str(1)),
-				"closed_2": self.query_db(get_closed_str(2)),
-				"closed_3": self.query_db(get_closed_str(3)),
-				"closed_4": self.query_db(get_closed_str(4))
+				"stats": self.export_player_edition(player[0], 'TRUE')
 			}
 
-			players_stats[player[0]]["teams"] = []
-			if self.query_db(f"SELECT COUNT(*) FROM games WHERE {is_playing_n}") > 0:
-				players_stats[player[0]]["teams"].append("N")
-			if self.query_db(f"SELECT COUNT(*) FROM games WHERE {is_playing_s}") > 0:
-				players_stats[player[0]]["teams"].append("S")
+			self.cursor.execute(f"SELECT DISTINCT g_edition FROM games WHERE {is_playing};")
+			editions = self.cursor.fetchall()
 
-			self.cursor.execute(f"SELECT g_start_time, g_end_time FROM games WHERE {is_playing};")
-			times = self.cursor.fetchall()
+			pl_stats["editions"] = len(editions)
+			pl_stats["stats_per_edition"] = []
 
-			for interval in times:
-				t_start = datetime.strptime(interval[0], "%Y-%m-%d %H:%M:%S")
-				t_end = datetime.strptime(interval[1], "%Y-%m-%d %H:%M:%S")
-				dist = t_end - t_start
-				players_stats[player[0]]["time_played"] += set_precision((dist.total_seconds() / 60), 2)
+			for ed_id in editions:
+				pl_stats["stats_per_edition"].append(
+					self.export_player_edition(player[0], f"g_edition = {ed_id[0]}", ed_id[0])
+				)
 
-				
-			players_stats[player[0]]["time_played"] = set_precision(players_stats[player[0]]["time_played"], 0)
-			players_stats[player[0]]["delta"] = players_stats[player[0]]["self_score"] - players_stats[player[0]]["opp_score"]
-			players_stats[player[0]]["delta_per_game"] = set_precision(
-				players_stats[player[0]]["delta"] / players_stats[player[0]]["games_played"],
-				2
-			)
-			players_stats[player[0]]["delta_per_hour"] = set_precision(
-				players_stats[player[0]]["delta"] / (players_stats[player[0]]["time_played"] / 60),
-				2
-			)
-			players_stats[player[0]]["delta_per_minute"] = set_precision(
-				players_stats[player[0]]["delta"] / players_stats[player[0]]["time_played"],
-				2
-			)
-
-			self.json_to_file(players_stats[player[0]], f"{dir}/{player[0]}.json")
+			self.json_to_file(pl_stats, f"{dir}/{player[0]}.json")
 
 		self.json_to_file(players_ids, f"{dir}/players_ids.json")
 		self.json_to_file(players_names, f"{dir}/players_names.json")

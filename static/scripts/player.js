@@ -1,5 +1,7 @@
 
 function load_stats() {
+    document.activeElement.blur();
+    
     const url_params = new URLSearchParams(window.location.search);
     const pl_id = url_params.get('p');
 
@@ -7,12 +9,25 @@ function load_stats() {
         .then(res => {
             return res.json();
         })
-        .then(data => {
-            document.getElementById('cont-name').innerHTML = data.name;
-            document.getElementById('main-editions').innerHTML = data.editions;
+        .then(pl_data => {
+            document.getElementById('main-name').innerHTML = pl_data.name;
+            document.getElementById('main-editions').innerHTML = pl_data.editions;
             document.getElementById('main-coordinates').innerHTML =
-                `(${data.lat}°N, ${data.long}°E)`;
+                `(${pl_data.lat}°N, ${pl_data.long}°E)`;
             
+            var ed_id = document.getElementById('ed-select').value;
+            var data = pl_data.stats;
+
+            document.getElementById('ed-select').innerHTML =
+                '<option value="gen">Generali</option>';
+
+            pl_data.stats_per_edition.forEach((ed_stats) => {
+                if (ed_stats.edition_id == ed_id) data = ed_stats;
+                document.getElementById('ed-select').innerHTML +=
+                    `<option value="${ed_stats.edition_id}">Edizione ${ed_stats.edition_id}</option>`;
+            });
+            document.getElementById('ed-select').value = ed_id;
+
             const team = (data.teams[0] == 'N') ? 'NORD' : 'SUD';
             if (data.teams.length > 1) team = 'NORD, SUD';
             document.getElementById('main-team').innerHTML = team;
@@ -50,12 +65,18 @@ function load_stats() {
                 `${data.gtichu_succ + data.gtichu_fail} (<span class="green">` +
                 `${data.gtichu_succ}</span> + <span class="red">${data.gtichu_fail}</span>)`;
 
-            render_map('map-wrapper', 460, 7.5, [{
-                name: data.name,
-                lat: data.lat,
-                long: data.long,
-                team: data.teams[0]
-            }], -100);
+            if (document.getElementById('map-wrapper').innerHTML == '') {
+                render_map('map-wrapper', 460, 7.5, [{
+                    name: pl_data.name,
+                    lat: pl_data.lat,
+                    long: pl_data.long,
+                    team: pl_data.stats.teams[0]
+                }], -100);
+            }
+        })
+        .catch(() => {
+            document.getElementById('main-name').innerHTML = 'Giocatore non trovato';
+            document.getElementById('tabs-wrapper').style.display = 'None';
         });
 }
 
