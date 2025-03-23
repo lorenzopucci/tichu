@@ -234,6 +234,22 @@ class TichuDB:
 		res["delta_per_hour"] = set_precision(res["delta"] / (res["time_played"] / 60), 2)
 		res["delta_per_minute"] = set_precision(res["delta"] / res["time_played"], 2)
 
+		self.cursor.execute(f"""
+			SELECT DISTINCT g_player_n2 FROM games WHERE g_player_n1 = {pl_id} UNION
+			SELECT DISTINCT g_player_n1 FROM games WHERE g_player_n2 = {pl_id} UNION
+			SELECT DISTINCT g_player_s1 FROM games WHERE g_player_s2 = {pl_id} UNION
+			SELECT DISTINCT g_player_s2 FROM games WHERE g_player_s1 = {pl_id};
+		""")
+		res["team_mates"] = [pl[0] for pl in self.cursor.fetchall()]
+
+		self.cursor.execute(f"""
+			SELECT DISTINCT g_player_n2 FROM games WHERE {is_playing_s} UNION
+			SELECT DISTINCT g_player_n1 FROM games WHERE {is_playing_s} UNION
+			SELECT DISTINCT g_player_s1 FROM games WHERE {is_playing_n} UNION
+			SELECT DISTINCT g_player_s2 FROM games WHERE {is_playing_n};
+		""")
+		res["opponents"] = [pl[0] for pl in self.cursor.fetchall()]
+
 		return res
 
 

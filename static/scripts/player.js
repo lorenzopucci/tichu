@@ -1,4 +1,24 @@
 
+function load_players(data) {
+    fetch('data/players/players_names.json')
+        .then(res => {
+            return res.json();
+        })
+        .then(pl_index => {
+            document.getElementById('cont-team_mates').innerHTML = '';
+            document.getElementById('cont-opponents').innerHTML = '';
+            
+            data.team_mates.forEach((m_id) => {
+                document.getElementById('cont-team_mates').innerHTML +=
+                    `<tr><td><a href="player.html?p=${m_id}">${pl_index[m_id]}</a></td></tr>`;
+            });
+            data.opponents.forEach((o_id) => {
+                document.getElementById('cont-opponents').innerHTML +=
+                    `<tr><td><a href="player.html?p=${o_id}">${pl_index[o_id]}</a></td></tr>`;
+            });
+        });
+}
+
 function load_stats() {
     document.activeElement.blur();
     
@@ -64,6 +84,8 @@ function load_stats() {
             document.getElementById('cont-gtichu').innerHTML =
                 `${data.gtichu_succ + data.gtichu_fail} (<span class="green">` +
                 `${data.gtichu_succ}</span> + <span class="red">${data.gtichu_fail}</span>)`;
+            
+            load_players(data);
 
             if (document.getElementById('map-wrapper').innerHTML == '') {
                 render_map('map-wrapper', 460, 7.5, [{
