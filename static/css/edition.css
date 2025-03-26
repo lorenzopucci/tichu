@@ -1,0 +1,36 @@
+
+#details {
+    margin: 20px 0 30px 0;
+    line-height: 1.3em;
+}
+
+#map-wrapper {
+    width: 500px;
+    margin: auto 0 auto 0;
+}
+
+.pl-table {
+    min-width: 260px;
+}
+
+#players-wrapper {
+    display: block;
+}
+
+#players-flex {
+    margin-bottom: 40px;
+}
+
+#games-table {
+    margin-top: 20px;
+    width: 100%;
+}
+
+@media screen and (max-width: 1200px) {
+    #players-wrapper {
+        display: flex;
+    }
+    #map-wrapper {
+        margin-top: 30px;
+    }
+}

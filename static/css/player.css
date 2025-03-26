@@ -28,11 +28,6 @@
 
 #players-wrapper {
     margin-top: 30px;
-    display: flex;
-}
-
-#players-wrapper > * {
-    padding: 15px 35px 15px 5px;
 }
 
 .pl-table {

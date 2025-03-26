@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<title>Dettagli edizione - 24ore di Tichu</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+<link href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" rel="stylesheet"/>
+
+<link rel="stylesheet" href="static/css/master.css">
+<link rel="stylesheet" href="static/css/header.css">
+<link rel="stylesheet" href="static/css/edition.css">
+<script src="static/scripts/common.js"></script>
+<script src="static/scripts/map.js"></script>
+<script src="static/scripts/edition.js"></script>
+</head>
+
+<body>
+<div id="header"></div>
+<div class="page-wrapper">
+    <h1>Edizione <span id="cont-id"></span></h1>
+    <div id="page-cont">
+
+    <div id="details">
+    Data: <span id="cont-start_t"></span> - <span id="cont-end_t"></span>
+    <br>
+    Capitani: <span id="cont-cap_n"></span> (NORD), <span id="cont-cap_s"></span> (SUD)
+    <br>
+    Vicecapitani: <span id="cont-vcap_n"></span> (NORD), <span id="cont-vcap_s"></span> (SUD)
+    <br>
+    Esito: <span id="cont-result"></span>
+    <br>
+    Mani giocate: <span id="cont-games_played"></span>
+    </div>
+
+    <h2>Partecipanti</h2>
+    <div id="players-flex" class="flexbox">
+    <div id="players-wrapper" class="flex-left">
+        <div class="pl-table-wrapper">
+            <table class="def-table pl-table">
+            <thead><tr><td>NORD</td></tr></thead>
+            <tbody id="cont-players_n"></tbody>
+            </table>
+        </div>
+        <div class="pl-table-wrapper">
+            <table class="def-table pl-table">
+            <thead><tr><td>SUD</td></tr></thead>
+            <tbody id="cont-players_s"></tbody>
+            </table>
+        </div>
+    </div>
+    <div id="map-wrapper"></div>
+    </div>
+
+    <h2>Mani (dall'inizio)</h2>
+    <table id="games-table" class="def-table">
+    <thead><tr>
+        <td>NORD</td> <td colspan="2">Punti</td> <td>SUD</td>
+    </tr></thead>
+    <tbody id="cont-games">
+    </tbody>
+    </table>
+    
+    </div>
+</div>
+</body>
+</html>

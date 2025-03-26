@@ -1,6 +1,6 @@
 
 function load_players(data) {
-    fetch('data/players/players_names.json')
+    fetch('data/players/players.json')
         .then(res => {
             return res.json();
         })
@@ -10,11 +10,11 @@ function load_players(data) {
             
             data.team_mates.forEach((m_id) => {
                 document.getElementById('cont-team_mates').innerHTML +=
-                    `<tr><td><a href="player.html?p=${m_id}">${pl_index[m_id]}</a></td></tr>`;
+                    `<tr><td><a href="player.html?p=${m_id}">${pl_index[m_id].name}</a></td></tr>`;
             });
             data.opponents.forEach((o_id) => {
                 document.getElementById('cont-opponents').innerHTML +=
-                    `<tr><td><a href="player.html?p=${o_id}">${pl_index[o_id]}</a></td></tr>`;
+                    `<tr><td><a href="player.html?p=${o_id}">${pl_index[o_id].name}</a></td></tr>`;
             });
         });
 }
