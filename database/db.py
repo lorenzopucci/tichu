@@ -23,7 +23,7 @@ exp_pl_sp.add_argument("-t", help="The directory the files will be exported to",
 
 exp_ed_sp = subp.add_parser("export_editions", help="Export statistics for all editions")
 exp_ed_sp.add_argument("-d", default="data.db", help="The database file")
-exp_ed_sp.add_argument("-t", help="The target json file", required=True)
+exp_ed_sp.add_argument("-t", help="The directory the files will be exported to", required=True)
 
 
 def set_precision(f, n):
@@ -259,7 +259,7 @@ class TichuDB:
 			os.makedirs(dir)
 		
 		players_ids = {}
-		players_names = {}
+		players_data = {}
 		
 		self.cursor.execute("SELECT * FROM players;")
 		res = self.cursor.fetchall()
@@ -270,7 +270,11 @@ class TichuDB:
 			is_playing = f"({is_playing_n} OR {is_playing_s})"
 
 			players_ids[player[1]] = player[0]
-			players_names[player[0]] = player[1]
+			players_data[player[0]] = {
+				"name": player[1],
+				"lat": player[2],
+				"long": player[3]
+			}
 
 			pl_stats = {
 				"name": player[1],
@@ -294,31 +298,88 @@ class TichuDB:
 			self.json_to_file(pl_stats, f"{dir}/{player[0]}.json")
 
 		self.json_to_file(players_ids, f"{dir}/players_ids.json")
-		self.json_to_file(players_names, f"{dir}/players_names.json")
+		self.json_to_file(players_data, f"{dir}/players.json")
 
-	def export_editions(self, file):
+	def export_game_data(self, g_id):
 
-		ed_data = []
+		def get_player(role):
+			return self.query_db(f"SELECT g_player_{role} FROM games WHERE g_id = {g_id};")
+		
+		def get_tichu(role):
+			return self.query_db(f"SELECT g_tichu_{role} FROM games WHERE g_id = {g_id};")
 
-		self.cursor.execute("SELECT * FROM editions;")
-		editions = self.cursor.fetchall()
+		return {
+			"player_n1": get_player("n1"),
+			"player_n2": get_player("n2"),
+			"player_s1": get_player("s1"),
+			"player_s2": get_player("s2"),
+			"tichu_n1": get_tichu("n1"),
+			"tichu_n2": get_tichu("n2"),
+			"tichu_s1": get_tichu("s1"),
+			"tichu_s2": get_tichu("s2"),
+			"ko_n": self.query_db(f"SELECT g_ko_n FROM games WHERE g_id = {g_id}"),
+			"ko_s": self.query_db(f"SELECT g_ko_s FROM games WHERE g_id = {g_id}"),
+			"score_n": self.query_db(f"SELECT g_score_n FROM games WHERE g_id = {g_id}"),
+			"score_s": self.query_db(f"SELECT g_score_s FROM games WHERE g_id = {g_id}"),
+			"tot_score_n": self.query_db(f"SELECT g_tot_score_n FROM games WHERE g_id = {g_id}"),
+			"tot_score_s": self.query_db(f"SELECT g_tot_score_s FROM games WHERE g_id = {g_id}")
+		}
 
-		for edition in editions:
-			ed_data.append({
-				"id": edition[0],
-				"satrt_t": edition[1],
-				"end_t": edition[2],
-				"cap_n": edition[3],
-				"cap_s": edition[4],
-				"vcap_n": edition[5],
-				"vcap_s": edition[6],
-				"winner": edition[7],
-				"games_played": self.query_db(f"SELECT COUNT(*) FROM games WHERE g_edition = {edition[0]}"),
-				"score_n": self.query_db(f"SELECT SUM(g_tot_score_n) FROM games WHERE g_edition = {edition[0]}"),
-				"score_s": self.query_db(f"SELECT SUM(g_tot_score_s) FROM games WHERE g_edition = {edition[0]}")
-			})
+	def export_edition_short(self, ed_id):
 
-		self.json_to_file(ed_data, file)
+		def get_edition_detil(col):
+			return self.query_db(f"SELECT {col} FROM editions WHERE ed_id = {ed_id};")
+
+		return {
+			"id": ed_id,
+			"start_t": get_edition_detil('ed_start_time'),
+			"end_t": get_edition_detil('ed_end_time'),
+			"cap_n": get_edition_detil('ed_cap_n'),
+			"cap_s": get_edition_detil('ed_cap_s'),
+			"vcap_n": get_edition_detil('ed_vcap_n'),
+			"vcap_s": get_edition_detil('ed_vcap_s'),
+			"winner": get_edition_detil('ed_winner'),
+			"games_played": self.query_db(f"SELECT COUNT(*) FROM games WHERE g_edition = {ed_id}"),
+			"score_n": self.query_db(f"SELECT SUM(g_tot_score_n) FROM games WHERE g_edition = {ed_id}"),
+			"score_s": self.query_db(f"SELECT SUM(g_tot_score_s) FROM games WHERE g_edition = {ed_id}")
+		}
+
+	def export_edition_data(self, ed_id):
+
+		res = self.export_edition_short(ed_id)
+
+		self.cursor.execute(f"""
+			SELECT DISTINCT g_player_n1 FROM games WHERE g_edition = {ed_id} UNION
+			SELECT DISTINCT g_player_n2 FROM games WHERE g_edition = {ed_id}
+		""")
+		res["players_n"] = [pl[0] for pl in self.cursor.fetchall()]
+
+		self.cursor.execute(f"""
+			SELECT DISTINCT g_player_s1 FROM games WHERE g_edition = {ed_id} UNION
+			SELECT DISTINCT g_player_s2 FROM games WHERE g_edition = {ed_id}
+		""")
+		res["players_s"] = [pl[0] for pl in self.cursor.fetchall()]
+
+		self.cursor.execute(f"SELECT g_id FROM games WHERE g_edition = {ed_id};")
+		res["games"] = [self.export_game_data(game[0]) for game in self.cursor.fetchall()]
+
+		return res
+
+	def export_editions(self, dir):
+
+		if not os.path.exists(dir):
+			os.makedirs(dir)
+
+		self.cursor.execute("SELECT ed_id FROM editions;")
+		editions = []
+
+		for ed in self.cursor.fetchall():
+			ed_data = self.export_edition_data(ed[0])
+			self.json_to_file(ed_data, f"{dir}/{ed[0]}.json")
+
+			editions.append(self.export_edition_short(ed[0]))
+
+		self.json_to_file(editions, f"{dir}/editions_index.json")
 
 
 if __name__ == "__main__":
