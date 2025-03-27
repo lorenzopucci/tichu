@@ -24,12 +24,16 @@ function get_ko(ko) {
     return '';
 }
 
+function get_pl_link(id, pl_index) {
+    return `<a href="player.html?p=${id}">${pl_index[id].name}</a>`;
+}
+
 function load_pl_table(id, players, pl_index) {
     document.getElementById(id).innerHTML = '';
 
     players.forEach(pl_id => {
         document.getElementById(id).innerHTML +=
-            `<tr><td><a href="player.html?p=${pl_id}">${pl_index[pl_id].name}</a></td></tr>`;
+            `<tr><td>${get_pl_link(pl_id, pl_index)}</td></tr>`;
     });
 }
 
