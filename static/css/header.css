@@ -13,6 +13,7 @@
 	font-size: 20px;
 	color: white;
 	display: flex;
+	flex-wrap: wrap;
 	padding: 12px 0 12px 0;
 	justify-content: space-between;
 }
@@ -25,19 +26,35 @@
 	text-decoration: none;
 }
 
-#rules-link {
-	font-size: 16px;
+#links-inner {
 	margin: auto 0 auto 0;
+	display: flex;
+}
+
+.header-link {
+	font-size: 16px;
+	margin-left: 15px;
+}
+
+#collapse-btn {
+	margin: 0;
+	padding: 0;
+	border: none;
+	background-color: transparent;
+	color: white;
+	font-size: 28px;
+	line-height: 0;
+	display: none;
 }
 
 #main-title {
 	text-decoration: none;
-	font-size: 28px;
+	font-size: 24px;
 	margin-right: 10px;
 }
 
 #tichu-img {
-	height: 36px;
+	height: 33px;
 }
 
 @media screen and (max-width: 800px) {
@@ -47,7 +64,29 @@
 	#tichu-img {
 		height: 25px
 	}
-	#rules-link {
-		font-size: 10px;
+	.header-link {
+		font-size: 14px;
+	}
+}
+
+@media screen and (max-width: 650px) {
+	#collapse-btn {
+		display: block;
+	}
+	.header-link {
+		display: block;
+		margin-left: 0;
+		margin-top: 10px;
+	}
+	#links-inner {
+		display: block;
+		max-height: 0px;
+        transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+		overflow: hidden;
+		min-width: 90%;
+	}
+	#links-inner.nav-visible {
+		max-height: 65em;
+		transition: max-height 1s ease-in-out;
 	}
 }

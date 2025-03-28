@@ -45,7 +45,7 @@ h2 {
     margin: 0;
 }
 
-button {
+.std-btn {
     background-color: transparent;
     font-size: 18px;
     color: black;
@@ -57,7 +57,7 @@ button {
     margin: 3px 2px 3px 2px;
 }
 
-button:hover {
+.std-btn:hover {
     text-decoration: underline;
 }
 

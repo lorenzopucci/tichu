@@ -9,6 +9,10 @@ function load_page() {
         });
 }
 
+function toggle_collapse_navbar() {
+    document.getElementById('links-inner').classList.toggle('nav-visible');
+}
+
 function get_tichu(tichu) {
     if (tichu == undefined || tichu == '') return '';
     if (tichu == 'T') return ' (<span class="orange">T</span>)';
