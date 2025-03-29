@@ -1,6 +1,7 @@
 p, li {
     line-height: 1.3em;
     font-size: 16px;
+    text-align: justify;
 }
 
 li {

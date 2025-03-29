@@ -70,3 +70,12 @@
         display: block;
     }
 }
+
+@media screen and (max-width: 600px) {
+    .pl-table-wrapper {
+        margin: 0 5px 0 5px;
+    }
+    .pl-table {
+        min-width: 150px;
+    }
+}
