@@ -3,8 +3,12 @@
     width: 100%;
     border: 1px solid black;
     border-radius: 8px;
-    padding: 15px 20px 15px 20px;
+    padding: 0;
     margin-top: 30px;
+}
+
+.ed-wrapper-inner {
+    margin: 15px 20px 15px 20px;
 }
 
 .ed-stats {
@@ -14,4 +18,10 @@
 
 .no-ul {
     text-decoration: none;
+}
+
+@media screen and (max-width: 800px) {
+    .ed-stats {
+        font-size: 14px;
+    }
 }

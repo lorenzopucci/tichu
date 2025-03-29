@@ -55,21 +55,28 @@ function load_edition_data(pl_index) {
                     });
                 });
             });
-            render_map('map-wrapper', 600, 6, map_data, 43.7714);
-            
+
+            if (window.innerWidth < 800) {
+                render_map('map-wrapper', 450, 5, map_data, 43.7714);
+            }
+            else {
+                render_map('map-wrapper', 600, 6, map_data, 43.7714);
+            }
 
             ed_data.games.forEach(game => {
-                document.getElementById('cont-games').innerHTML +=
-                    `<tr><td><a href="player.html?p=${game.player_n1}">` +
-                    `${pl_index[game.player_n1].name}</a>${get_tichu(game.tichu_n1)}, ` +
-                    `<a href="player.html?p=${game.player_n2}">` +
-                    `${pl_index[game.player_n2].name}</a>${get_tichu(game.tichu_n2)}</td>` +
-                    `<td>${game.tot_score_n}${get_ko(game.ko_n)}</td>` +
-                    `<td>${game.tot_score_s}${get_ko(game.ko_s)}</td>` +
-                    `<td><a href="player.html?p=${game.player_s1}">` +
-                    `${pl_index[game.player_s1].name}</a>${get_tichu(game.tichu_s1)}, ` +
-                    `<a href="player.html?p=${game.player_s2}">` +
-                    `${pl_index[game.player_s2].name}</a>${get_tichu(game.tichu_s2)}</td></tr>`;
+                document.getElementById('cont-games').innerHTML += `
+                    <tr>
+                    <td>
+                    <span class="pl-name">${get_pl_link(game.player_n1, pl_index)}${get_tichu(game.tichu_n1)}, </span>
+                    <span class="pl-name">${get_pl_link(game.player_n2, pl_index)}${get_tichu(game.tichu_n2)}</span>
+                    </td>
+                    <td>${game.tot_score_n}${get_ko(game.ko_n)}</td>
+                    <td>${game.tot_score_s}${get_ko(game.ko_s)}</td>
+                    <td>
+                    <span class="pl-name">${get_pl_link(game.player_s1, pl_index)}${get_tichu(game.tichu_s1)}, </span>
+                    <span class="pl-name">${get_pl_link(game.player_s2, pl_index)}${get_tichu(game.tichu_s2)}</span>
+                    </td>
+                    </tr>`;
             });
         })
         .catch(() => {

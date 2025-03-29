@@ -88,12 +88,19 @@ function load_stats() {
             load_players(data);
 
             if (document.getElementById('map-wrapper').innerHTML == '') {
-                render_map('map-wrapper', 460, 7.5, [{
+                const map_data = [{
                     name: pl_data.name,
                     lat: pl_data.lat,
                     long: pl_data.long,
                     team: pl_data.stats.teams[0]
-                }], -100);
+                }];
+                
+                if (window.innerWidth < 850) {
+                    render_map('map-wrapper', 360, 8, map_data, -100);
+                }
+                else {
+                    render_map('map-wrapper', 460, 8, map_data, -100);
+                }
             }
         })
         .catch(() => {

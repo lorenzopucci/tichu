@@ -9,8 +9,17 @@
     margin: auto 0 auto 0;
 }
 
+#map-outer {
+    margin: auto 0 auto 0;
+}
+
 .pl-table {
     min-width: 260px;
+}
+
+.pl-table-wrapper {
+    padding: 0;
+    margin: 15px 0 15px 0;
 }
 
 #players-wrapper {
@@ -27,10 +36,37 @@
 }
 
 @media screen and (max-width: 1200px) {
+    #players-outer {
+        width: 100%;
+    }
     #players-wrapper {
         display: flex;
+        margin: 15px auto 15px auto;
+        padding: 0;
     }
     #map-wrapper {
         margin-top: 30px;
+        width: 100%;
+    }
+    #players-flex {
+        display: block;
+    }
+    .pl-table-wrapper {
+        margin: 0 20px 0 20px;
+    }
+    .pl-table {
+        min-width: 220px;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .def-table *, #details {
+        font-size: 14px;
+    }
+    .pl-table {
+        min-width: 180px;
+    }
+    .pl-name {
+        display: block;
     }
 }

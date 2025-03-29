@@ -21,6 +21,7 @@ function load_editions(pl_index) {
 
                 document.getElementById('page-cont').innerHTML += `
                     <div class="ed-wrapper">
+                    <div class="ed-wrapper-inner">
                         <a class="no-ul" href="edition.html?e=${edition.id}">
                         <h2>Edizione ${edition.id}</h2>
                         </a>
@@ -36,6 +37,7 @@ function load_editions(pl_index) {
                         <br>
                         Risultato: ${res}
                         </div>
+                    </div>
                     </div>
                 `;
             });
